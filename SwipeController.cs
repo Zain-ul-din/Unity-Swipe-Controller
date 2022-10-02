@@ -2,15 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+  USAGE:
+     float x = TouchController.Instance.x;
+     float y = TouchController.Instance.y;
+     
+*/
 
-public class Move_byTouch : MonoBehaviour
+public class TouchController : MonoBehaviour
 {
-    [SerializeField]private float playerspeed=13f;// Player Speed for X-Y axis
+    [HideInInspector] public float x , y;
+    public static TouchController Instance {get; private set;}
+    
+    [SerializeField]private float playerspeed = 13f;// Player Speed for X-Y axis
 
     // Swipe Var
-    [SerializeField] private float MinSwipeDistance=50f;// In -> px
-    [SerializeField] private float MaxSwipeTime=0.5f;// Max Time Requried to move 
-    private float SwipeTime;// Total Swipe Time
+    [SerializeField] private float MinSwipeDistance = 50f;// In -> px
+    [SerializeField] private float MaxSwipeTime = 0.5f;// Max Time Requried to move 
+    
+    private float  SwipeTime;// Total Swipe Time
   
     // Swipe Time
 
@@ -21,24 +31,28 @@ public class Move_byTouch : MonoBehaviour
 
      private Vector2 StartSwipePos;// Swipe Start pos
      private Vector2 EndSwipePos;// End pos
-
+    
+    private void Awake ()
+    {
+      Instance = this;
+    }
+    
     void Update()
     {
-        getinput();// Geting Input for touch
-        
+        GetInput();// Geting Input for touch
     }
 
-    private void getinput()
+    private void GetInput ()
     {
        
-        if (Input.touchCount>0)
+        if (Input.touchCount > 0)
         {
-            Touch touch = Input.GetTouch(0); // Take 1st Touch by User
+            Touch touch = Input.GetTouch(0); // Takes 1st Touch by User
             if(touch.phase==TouchPhase.Began)// Toch starts 
             {
                 SwipeStartTime = Time.time;
                 StartSwipePos = touch.position;
-                // Get Time & Position of toch
+                // Get Time & Position of touch
             }
             else if(touch.phase==TouchPhase.Ended)// ?? Touch ended
             {
@@ -49,11 +63,21 @@ public class Move_byTouch : MonoBehaviour
                 SwipeTime = SwipeEndTime - SwipeStartTime;//Check how long User Swipe
                 swipelenght = (EndSwipePos - StartSwipePos).magnitude;// Check Lenght
                 
-                if(SwipeTime<MaxSwipeTime && swipelenght>MinSwipeDistance)// Time & Distance 
+                if(SwipeTime < MaxSwipeTime && swipelenght > MinSwipeDistance)// Time & Distance 
                 {
                     SwipeControl();
                 }
             }
+            else
+            {
+                 x = 0;
+                 y = 0;
+            }
+        }
+        else
+        {
+           x = 0;
+           y = 0;
         }
 
     }// getinput <-
@@ -67,30 +91,32 @@ public class Move_byTouch : MonoBehaviour
         // Abs return's Postive value
 
         // -> for x Movment
-        if(x_Distance>Y_Distance)
+        if(x_Distance > Y_Distance)
         {
-            if(Distance.x>0)// Swipe Right
+            if(Distance.x > 0)// Swipe Right
             {
-                this.gameObject.transform.Translate(playerspeed * Time.deltaTime, 0, 0);
+                x = 1;
+               // this.gameObject.transform.Translate(playerspeed * Time.deltaTime, 0, 0);
             }
             if(Distance.x<0)// Swipe Left
-
             {
-                this.gameObject.transform.Translate(-playerspeed * Time.deltaTime, 0, 0);
+               x = -1;
+               // this.gameObject.transform.Translate(-playerspeed * Time.deltaTime, 0, 0);
             }       
         }
 
         // -> for Y Movement
-        
-        if(Y_Distance>x_Distance)
+        if(Y_Distance > x_Distance)
         {
-            if(Distance.y>0)// Swipe up
+            if(Distance.y > 0)// Swipe up
             {
-                this.gameObject.transform.Translate(0, playerspeed * Time.deltaTime, 0);
+               y = 1;
+               // this.gameObject.transform.Translate(0, playerspeed * Time.deltaTime, 0);
             }
-            if(Distance.y<0)// Swipe Down
+            if(Distance.y < 0)// Swipe Down
             {
-                this.gameObject.transform.Translate(0, -playerspeed * Time.deltaTime, 0);
+               y = -1;
+               // this.gameObject.transform.Translate(0, -playerspeed * Time.deltaTime, 0);
             }
         }
     }// <- Swipe control
