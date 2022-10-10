@@ -1,9 +1,10 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Move_byTouch : MonoBehaviour
+public class MoveByTouch : MonoBehaviour
 {
     [SerializeField]private float playerspeed=13f;// Player Speed for X-Y axis
 
